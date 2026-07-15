@@ -1,0 +1,35 @@
+# --- Credenciales (NUNCA subir esto) ---
+.env
+*.pem
+*.key
+.oci/
+infra/oci/*.pem
+infra/oci/config
+
+# --- Java / Maven ---
+backend/target/
+backend/*.class
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# --- Python ---
+ml-service/__pycache__/
+ml-service/*.pyc
+ml-service/.venv/
+data-science/__pycache__/
+data-science/.venv/
+data-science/.ipynb_checkpoints/
+*.pyc
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- Modelos grandes (si pesan mucho, subir a Object Storage y no al repo) ---
+# data-science/models/*.joblib
+
+# --- Sistema ---
+.DS_Store
+*.log
