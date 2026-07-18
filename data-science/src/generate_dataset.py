@@ -35,6 +35,19 @@ EQUIPOS_LAMBDA = {
 }
 EQUIPOS_MINIMO = 1
 
+# uso_horario_pico: la probabilidad de pico crece con el consumo. Se modela con
+# una logistica sobre el consumo estandarizado; PICO_K controla que tan marcada
+# es esa relacion (a mayor K, mas separacion entre bajos y altos consumos).
+PICO_K = 1.2
+
+# Outliers: fraccion de registros con consumo extremo (a proposito, para el EDA).
+OUTLIERS_FRAC = 0.04
+OUTLIER_FACTOR = (2.5, 4.0)  # rango del multiplicador de consumo
+
+
+def _sigmoide(x: np.ndarray) -> np.ndarray:
+    return 1.0 / (1.0 + np.exp(-x))
+
 
 def _normal_truncada(rng, media, sigma, tam, minimo):
     """Normal(media, sigma) re-muestreando los valores por debajo de `minimo`.
@@ -77,16 +90,32 @@ def generar_registros(n: int = N_REGISTROS) -> pd.DataFrame:
         lam = EQUIPOS_LAMBDA[tipo]
         cantidad_equipos[mask] = RNG.poisson(lam - EQUIPOS_MINIMO, size=tam) + EQUIPOS_MINIMO
 
+    # uso_horario_pico: Bernoulli cuya probabilidad crece con el consumo.
+    # Se estandariza el consumo (media 0, desv 1) y se pasa por una logistica,
+    # asi la senal es global y comparable entre tipos de inmueble.
+    consumo_z = (consumo_kwh - consumo_kwh.mean()) / consumo_kwh.std()
+    prob_pico = _sigmoide(PICO_K * consumo_z)
+    uso_horario_pico = RNG.random(n) < prob_pico
+
+    # horas_alto_consumo: uniforme discreta 1-12; si hay pico se sesga hacia
+    # arriba tomando el maximo de dos tiradas (empuja la masa a valores altos).
+    tirada_a = RNG.integers(1, 13, size=n)
+    tirada_b = RNG.integers(1, 13, size=n)
+    horas_alto_consumo = np.where(uso_horario_pico, np.maximum(tirada_a, tirada_b), tirada_a)
+
+    # Outliers: ~4% de registros con consumo extremo (multiplicador alto).
+    # Son intencionales: le dan material al EDA del Bloque B y credibilidad al set.
+    n_outliers = round(OUTLIERS_FRAC * n)
+    idx_outliers = RNG.choice(n, size=n_outliers, replace=False)
+    consumo_kwh[idx_outliers] *= RNG.uniform(*OUTLIER_FACTOR, size=n_outliers)
+
     df = pd.DataFrame({
         "consumo_kwh": np.round(consumo_kwh, 2),
+        "uso_horario_pico": uso_horario_pico,
         "cantidad_equipos": cantidad_equipos,
         "tipo_inmueble": tipo_inmueble,
+        "horas_alto_consumo": horas_alto_consumo.astype(int),
     })
-
-    # TODO (commit 2): agregar las features restantes con senal para el modelo
-    # - uso_horario_pico: Bernoulli correlacionada con el consumo
-    # - horas_alto_consumo: uniforme discreta 1-12, sesgada si hay pico
-    # - inyectar 3-5% de outliers (consumos extremos)
     return df
 
 
@@ -100,6 +129,11 @@ def main():
     print(df.head())
     print("\nConsumo medio por tipo:")
     print(df.groupby("tipo_inmueble")["consumo_kwh"].mean().round(1))
+    print("\nTasa de horario pico segun nivel de consumo (debe subir con el consumo):")
+    tercios = pd.qcut(df["consumo_kwh"], 3, labels=["bajo", "medio", "alto"])
+    print(df.groupby(tercios, observed=True)["uso_horario_pico"].mean().round(2))
+    print("\nHoras alto consumo: media con pico vs sin pico:")
+    print(df.groupby("uso_horario_pico")["horas_alto_consumo"].mean().round(1))
 
 
 if __name__ == "__main__":
