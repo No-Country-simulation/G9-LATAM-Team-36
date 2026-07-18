@@ -27,8 +27,9 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# --- Modelos grandes (si pesan mucho, subir a Object Storage y no al repo) ---
+
 # data-science/models/*.joblib
+.contexto-proyecto/
 
 # --- Sistema ---
 .DS_Store
