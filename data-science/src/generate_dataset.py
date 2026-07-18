@@ -11,8 +11,16 @@ Ejecutar:
 import numpy as np
 import pandas as pd
 
+from labeling_rules import etiquetar
+
 RNG = np.random.default_rng(seed=42)
 N_REGISTROS = 4000
+
+# Ruta de salida, relativa a la raiz del repo (ejecutar desde ahi).
+RUTA_CSV = "data-science/data/dataset_energia.csv"
+
+# Ninguna categoria debe quedar por debajo de este porcentaje (DoD del Bloque A).
+BALANCE_MINIMO = 20.0
 
 # --- Parametros de simulacion por tipo de inmueble ---
 # Los tres tipos y su peso en el muestreo (deben sumar 1.0).
@@ -119,21 +127,35 @@ def generar_registros(n: int = N_REGISTROS) -> pd.DataFrame:
     return df
 
 
+def _verificar_balance(df: pd.DataFrame) -> None:
+    """Avisa si alguna categoria queda por debajo del minimo del DoD."""
+    balance = df["categoria"].value_counts(normalize=True) * 100
+    print("\nBalance de clases (%):")
+    print(balance.round(1).to_string())
+    if balance.min() < BALANCE_MINIMO:
+        print(
+            f"\n⚠️  Alguna clase quedo por debajo de {BALANCE_MINIMO:.0f}% "
+            "-> revisar umbrales en labeling_rules.py (coordinar con Bloque B)."
+        )
+    else:
+        print(f"\n✅ Todas las clases >= {BALANCE_MINIMO:.0f}%")
+
+
 def main():
     df = generar_registros()
-    # TODO (commit 3): etiquetar y exportar
-    # from labeling_rules import etiquetar
-    # df = etiquetar(df)  # agrega la columna 'categoria' (Bloque B define la formula)
-    # df.to_csv("data-science/data/dataset_energia.csv", index=False)
-    print(f"Registros generados: {len(df)}")
+    df = etiquetar(df)  # agrega la columna 'categoria' (Bloque B define la formula)
+    df.to_csv(RUTA_CSV, index=False)
+
+    print(f"Dataset generado: {len(df)} registros -> {RUTA_CSV}")
     print(df.head())
     print("\nConsumo medio por tipo:")
-    print(df.groupby("tipo_inmueble")["consumo_kwh"].mean().round(1))
+    print(df.groupby("tipo_inmueble")["consumo_kwh"].mean().round(1).to_string())
     print("\nTasa de horario pico segun nivel de consumo (debe subir con el consumo):")
     tercios = pd.qcut(df["consumo_kwh"], 3, labels=["bajo", "medio", "alto"])
-    print(df.groupby(tercios, observed=True)["uso_horario_pico"].mean().round(2))
+    print(df.groupby(tercios, observed=True)["uso_horario_pico"].mean().round(2).to_string())
     print("\nHoras alto consumo: media con pico vs sin pico:")
-    print(df.groupby("uso_horario_pico")["horas_alto_consumo"].mean().round(1))
+    print(df.groupby("uso_horario_pico")["horas_alto_consumo"].mean().round(1).to_string())
+    _verificar_balance(df)
 
 
 if __name__ == "__main__":
