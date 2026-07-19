@@ -34,3 +34,4 @@ frontend/.vite/
 # --- Sistema ---
 .DS_Store
 *.log
+.vscode
