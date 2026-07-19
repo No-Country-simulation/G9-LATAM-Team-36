@@ -1,8 +1,26 @@
-pandas
-numpy
-scikit-learn
-joblib
-matplotlib
-seaborn
-jupyter
-oci
+# Modulo Ciencia de Datos — EnergiAI (Bloques A, B, C)
+# Python 3.11+ (desarrollado y probado con 3.14).
+# Versiones fijadas para que todo el equipo instale exactamente lo mismo.
+#
+# Setup:
+#   cd data-science
+#   python -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+
+# --- Datos y computo numerico (Bloques A, B, C) ---
+pandas==3.0.3
+numpy==2.5.1
+
+# --- Modelado y serializacion (Bloque C) ---
+scikit-learn==1.9.0
+joblib==1.5.3
+
+# --- Visualizacion / EDA (Bloque B) ---
+matplotlib==3.11.1
+seaborn==0.13.2
+
+# --- Notebooks (Bloques B, C) ---
+jupyter==1.1.1
+
+# --- OCI Object Storage: subida/descarga del modelo (Bloque C) ---
+oci==2.182.0
