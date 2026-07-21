@@ -1,0 +1,7 @@
+# No copiar entorno ni artefactos de desarrollo a la imagen
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+tests/
