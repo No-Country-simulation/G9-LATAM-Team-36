@@ -2,31 +2,31 @@ package com.team36.energiai.controller;
 
 import com.team36.energiai.dto.AnalisisRequest;
 import com.team36.energiai.dto.AnalisisResponse;
-import com.team36.energiai.service.AnalisisService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.team36.energiai.model.Categoria;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Bloque E — Endpoint principal del MVP (Contrato 1). */
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
+@RequestMapping("/api/analisis-energetico")
 public class AnalisisController {
 
-    private final AnalisisService analisisService;
+    @PostMapping
+    public ResponseEntity<AnalisisResponse> analizar(@RequestBody @Valid AnalisisRequest request) {
+        AnalisisResponse mockResponse = new AnalisisResponse(
+                Categoria.INEFICIENTE,
+                0.88,
+                List.of("Reduce el uso de electrodomésticos en horas pico.", "Optimiza el rendimiento térmico de tu inmueble."),
+                BigDecimal.valueOf(45.50)
+        );
 
-    public AnalisisController(AnalisisService analisisService) {
-        this.analisisService = analisisService;
-    }
-
-    @PostMapping("/analisis-energetico")
-    @Operation(summary = "Analiza el consumo energético y devuelve clasificación, recomendaciones y costo")
-    @ApiResponse(responseCode = "200", description = "Análisis realizado correctamente")
-    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
-    @ApiResponse(responseCode = "503", description = "Servicio de análisis no disponible")
-    public ResponseEntity<AnalisisResponse> analizar(@Valid @RequestBody AnalisisRequest request) {
-        return ResponseEntity.ok(analisisService.analizar(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mockResponse);
     }
 }

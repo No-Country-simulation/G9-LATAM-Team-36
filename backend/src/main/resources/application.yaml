@@ -8,9 +8,10 @@ spring:
       ddl-auto: update
     show-sql: false
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
+# springdoc: comentado hasta que agreguemos la dependencia al pom.xml
+# springdoc:
+#   swagger-ui:
+#     path: /swagger-ui.html
 
 ---
 spring:
