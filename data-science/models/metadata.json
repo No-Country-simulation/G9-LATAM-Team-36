@@ -1,10 +1,10 @@
 {
   "modelo": "RandomForestClassifier (pipeline con OneHot + StandardScaler)",
-  "fecha_entrenamiento": "2026-07-21T00:35:39.071780+00:00",
+  "fecha_entrenamiento": "2026-07-21T00:59:32.166816+00:00",
   "sklearn_version": "1.9.0",
-  "mejores_params": {
-    "model__max_depth": null,
-    "model__n_estimators": 100
+  "params": {
+    "n_estimators": 100,
+    "max_depth": null
   },
   "metricas_test": {
     "accuracy": 0.9613,
