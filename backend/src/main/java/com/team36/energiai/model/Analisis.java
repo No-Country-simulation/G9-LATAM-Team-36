@@ -1,5 +1,7 @@
 package com.team36.energiai.model;
 
+import com.team36.energiai.dto.AnalisisRequest;
+import com.team36.energiai.dto.AnalisisResponse;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -119,5 +121,19 @@ public class Analisis {
 
     public void setCreadoEn(LocalDateTime creadoEn) {
         this.creadoEn = creadoEn;
+    }
+
+    public static Analisis desde(AnalisisRequest request, AnalisisResponse response){
+        Analisis analisis = new Analisis();
+        analisis.setConsumoKwh(request.consumoKwh());
+        analisis.setUsoHorarioPico(request.usoHorarioPico());
+        analisis.setCantidadEquipos(request.cantidadEquipos());
+        analisis.setTipoInmueble(request.tipoInmueble());
+        analisis.setHorasAltoConsumo(request.horasAltoConsumo());
+        analisis.setCategoria(response.categoria().name());
+        analisis.setProbabilidad(BigDecimal.valueOf(response.probabilidad()));
+        analisis.setCostoEstimadoMensual(response.costoEstimadoMensual());
+        analisis.setRecomendaciones(response.recomendaciones());
+        return  analisis;
     }
 }
