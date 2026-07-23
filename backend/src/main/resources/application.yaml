@@ -8,6 +8,9 @@ spring:
       ddl-auto: update
     show-sql: false
 
+tarifa:
+  kwh: 0.75
+
 # springdoc: comentado hasta que agreguemos la dependencia al pom.xml
 # springdoc:
 #   swagger-ui:
