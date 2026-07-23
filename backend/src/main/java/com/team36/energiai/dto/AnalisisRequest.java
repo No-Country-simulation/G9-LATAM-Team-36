@@ -20,7 +20,7 @@ public record AnalisisRequest(
     @Min(value = 1, message = "debe ser al menos 1")
     Integer cantidadEquipos,
 
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_VALUES)
     @JsonProperty("tipo_inmueble")
     @NotNull(message = "es obligatorio")
     TipoInmueble tipoInmueble,
