@@ -8,31 +8,27 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 
 @Service
 public class AnalisisService {
 
-    private static final BigDecimal TARIFA_KWH = new BigDecimal("0.75");
-
     private final MlClient mlClient;
-    /* private final RecomendacionService recomendacionService; */
+    private final CalculoFinancieroService calculoFinancieroService;
+    private final RecomendacionService recomendacionService;
 
-    public AnalisisService(MlClient mlClient /*, RecomendacionService recomendacionService */) {
+    public AnalisisService(MlClient mlClient, CalculoFinancieroService calculoFinancieroService, RecomendacionService recomendacionService) {
         this.mlClient = mlClient;
-        /* this.recomendacionService = recomendacionService; */
+        this.calculoFinancieroService = calculoFinancieroService;
+        this.recomendacionService = recomendacionService;
     }
 
     public AnalisisResponse analizar(AnalisisRequest request) {
         PrediccionDto prediccion = mlClient.predecir(request);
 
-        BigDecimal costoEstimado = BigDecimal.valueOf(request.consumoKwh())
-                .multiply(TARIFA_KWH)
-                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal costoEstimado = calculoFinancieroService.calcularCostoEstimado(request.consumoKwh());
 
-        // var recomendaciones = recomendacionService.generar(request, prediccion.categoria());
-        var recomendaciones = List.of("Reduce el uso de electrodomésticos en horas pico.", "Optimiza el rendimiento térmico de tu inmueble.");
+        var recomendaciones = recomendacionService.generar(request, prediccion.categoria());
 
         AnalisisResponse response = new AnalisisResponse(
                 prediccion.categoria(),
