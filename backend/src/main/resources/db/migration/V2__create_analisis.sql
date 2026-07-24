@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS analisis (
                           categoria             VARCHAR(50),
                           probabilidad          NUMERIC(5,2),
                           costo_estimado_mensual NUMERIC(10,2),
-                          recomendaciones       JSONB,
+                          recomendaciones       TEXT,
                           creado_en             TIMESTAMP
 );
