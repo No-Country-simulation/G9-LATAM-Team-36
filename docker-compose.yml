@@ -1,4 +1,6 @@
-version: "3.9"
+# EnergiAI — orquestación de los 4 servicios (Bloque J).
+# Uso local:  cp .env.example .env  (opcional; hay defaults)  &&  docker compose up -d --build
+# Las variables usan ${VAR:-default}, así que levanta aunque no exista .env.
 
 services:
   postgres:
@@ -21,24 +23,31 @@ services:
   ml-service:
     build: ./ml-service
     container_name: energiai-ml-service
-    env_file: .env
+    environment:
+      USE_LOCAL_MODEL: ${USE_LOCAL_MODEL:-true}
+    volumes:
+      # Monta el modelo real entrenado (Bloque C) para correr con el modelo de
+      # verdad en local, sin depender de OCI. model_loader lo busca en /code/models.
+      - ./data-science/models:/code/models:ro
     ports:
       - "8000:8000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      # La imagen python:slim NO trae curl -> se usa la stdlib de Python.
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 15s
 
   backend:
     build: ./backend
     container_name: energiai-backend
-    env_file: .env
     environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-energiai}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-energiai}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
-      ML_SERVICE_URL: http://ml-service:8000
+      ML_SERVICE_URL: ${ML_SERVICE_URL:-http://ml-service:8000}
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,7 +59,6 @@ services:
   frontend:
     build: ./frontend
     container_name: energiai-frontend
-    env_file: .env
     depends_on:
       - backend
     ports:
