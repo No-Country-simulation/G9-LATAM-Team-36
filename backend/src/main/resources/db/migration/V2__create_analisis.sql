@@ -1,4 +1,4 @@
-CREATE TABLE analisis (
+CREATE TABLE IF NOT EXISTS analisis (
                           id                    BIGSERIAL PRIMARY KEY,
                           consumo_kwh           DOUBLE PRECISION,
                           uso_horario_pico      BOOLEAN,
