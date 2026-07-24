@@ -19,7 +19,7 @@ public class ConsultaService {
     private AnalisisRepository repository;
 
     public AnalisisResponse obtenerPorId(Long id) {
-        // cambiar RuntimeException
+        // cambiar excepcion
         Analisis analisis=repository.findById(id).orElseThrow(() -> new NoSuchElementException("Analisis no encontrado. ID: "+id));
         return toResponse(analisis);
     }
