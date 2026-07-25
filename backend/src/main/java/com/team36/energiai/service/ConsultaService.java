@@ -1,6 +1,7 @@
 package com.team36.energiai.service;
 
 import com.team36.energiai.dto.AnalisisResponse;
+import com.team36.energiai.exception.RecursoNoEncontradoException;
 import com.team36.energiai.model.Analisis;
 import com.team36.energiai.model.Categoria;
 import com.team36.energiai.repository.AnalisisRepository;
@@ -15,12 +16,15 @@ import java.util.NoSuchElementException;
 @Service
 @Transactional
 public class ConsultaService {
-    @Autowired
-    private AnalisisRepository repository;
+
+    private final AnalisisRepository repository;
+
+    public ConsultaService(AnalisisRepository repository) {
+        this.repository = repository;
+    }
 
     public AnalisisResponse obtenerPorId(Long id) {
-        // cambiar excepcion
-        Analisis analisis=repository.findById(id).orElseThrow(() -> new NoSuchElementException("Analisis no encontrado. ID: "+id));
+        Analisis analisis = repository.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Analisis no encontrado con id " + id));
         return toResponse(analisis);
     }
 
