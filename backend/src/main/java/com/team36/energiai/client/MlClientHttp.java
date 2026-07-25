@@ -3,6 +3,7 @@ package com.team36.energiai.client;
 import com.team36.energiai.dto.AnalisisRequest;
 import com.team36.energiai.dto.PrediccionDto;
 
+import com.team36.energiai.exception.MlServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,11 +25,16 @@ public class MlClientHttp implements MlClient {
     @Override
     public PrediccionDto predecir(AnalisisRequest request) {
 
-        return restClient.post()
-                .uri("/predecir")
-                .body(request)
-                .retrieve()
-                .body(PrediccionDto.class);
-
+        try {
+            return restClient.post()
+                    .uri("/predict")
+                    .body(request)
+                    .retrieve()
+                    .body(PrediccionDto.class);
+        } catch (RestClientException ex) {
+            throw new MlServiceUnavailableException(
+                    "No se pudo obtener la prediccion del servicio ML", ex
+            );
+        }
     }
 }
