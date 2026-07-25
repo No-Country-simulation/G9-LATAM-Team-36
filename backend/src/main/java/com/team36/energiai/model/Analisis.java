@@ -30,7 +30,8 @@ public class Analisis {
     private BigDecimal probabilidad;
     private BigDecimal costoEstimadoMensual;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = RecomendacionesConverter.class)
+    @Column(columnDefinition = "TEXT")
     private List<String> recomendaciones;
     @CreationTimestamp
     private LocalDateTime creadoEn;
