@@ -4,6 +4,8 @@ import com.team36.energiai.client.MlClient;
 import com.team36.energiai.dto.AnalisisRequest;
 import com.team36.energiai.dto.AnalisisResponse;
 import com.team36.energiai.dto.PrediccionDto;
+import com.team36.energiai.model.Analisis;
+import com.team36.energiai.repository.AnalisisRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,11 +18,13 @@ public class AnalisisService {
     private final MlClient mlClient;
     private final CalculoFinancieroService calculoFinancieroService;
     private final RecomendacionService recomendacionService;
+    private final AnalisisRepository analisisRepository;
 
-    public AnalisisService(MlClient mlClient, CalculoFinancieroService calculoFinancieroService, RecomendacionService recomendacionService) {
+    public AnalisisService(MlClient mlClient, CalculoFinancieroService calculoFinancieroService, RecomendacionService recomendacionService, AnalisisRepository analisisRepository) {
         this.mlClient = mlClient;
         this.calculoFinancieroService = calculoFinancieroService;
         this.recomendacionService = recomendacionService;
+        this.analisisRepository = analisisRepository;
     }
 
     public AnalisisResponse analizar(AnalisisRequest request) {
@@ -37,7 +41,7 @@ public class AnalisisService {
                 costoEstimado
         );
 
-        // analisisRepository.save(Analisis.desde(request, response));
+        analisisRepository.save(Analisis.desde(request, response));
 
         return response;
     }

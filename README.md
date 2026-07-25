@@ -8,7 +8,7 @@
 [![Licencia](https://img.shields.io/badge/licencia-MIT-blue)]()
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)]()
 [![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)]()
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot&logoColor=white)]()
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4-6DB33F?logo=springboot&logoColor=white)]()
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)]()
 [![OCI](https://img.shields.io/badge/Oracle%20Cloud-Infrastructure-F80000?logo=oracle&logoColor=white)]()
 
@@ -52,27 +52,25 @@ negocio.
 ## 🧱 Arquitectura
 
 EnergiAI está compuesto por cuatro servicios independientes que trabajan en conjunto,
-desplegados sobre **Oracle Cloud Infrastructure (OCI)**:
+orquestados con Docker Compose y desplegados sobre **Oracle Cloud Infrastructure (OCI)**:
 
-```
-                    ┌───────────────────────┐
-   Usuario  ───────►│   Interfaz web (React) │
-                    └───────────┬───────────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │   API REST (Spring Boot) │──────► Base de datos
-                    └───────────┬───────────┘         (historial de análisis)
-                                │
-                    ┌───────────▼───────────┐
-                    │ Servicio de predicción  │◄────── Modelo entrenado
-                    │      (FastAPI)          │        (Object Storage)
-                    └───────────────────────┘
+```mermaid
+flowchart TD
+    U([Usuario]) --> F["🖥️ Frontend<br/>React + Nginx · :80"]
+    F -->|"Contrato 1<br/>POST /analisis-energetico"| B["☕ Backend<br/>Spring Boot · :8080"]
+    B -->|"Contrato 2<br/>POST /predict"| M["🤖 Servicio ML<br/>FastAPI · :8000"]
+    B --> D[("🗄️ PostgreSQL<br/>historial")]
+    M -->|carga| MJ["📦 modelo.joblib"]
+    MJ -.->|sube / descarga| OS[("☁️ OCI Object Storage")]
 ```
 
 - **Interfaz web** — formulario de ingreso de datos, visualización de resultados y simulador interactivo.
 - **API REST** — valida la información recibida, orquesta el análisis y calcula el costo estimado.
 - **Servicio de predicción** — ejecuta el modelo de Machine Learning entrenado y devuelve la clasificación.
 - **Infraestructura en la nube (OCI)** — aloja la aplicación con disponibilidad continua y almacena el modelo entrenado.
+
+Los servicios se comunican por la red interna de Docker; solo el frontend (puerto 80) se
+expone al exterior.
 
 ---
 
@@ -82,7 +80,7 @@ desplegados sobre **Oracle Cloud Infrastructure (OCI)**:
 |---|---|
 | Ciencia de datos | Python, Pandas, Scikit-Learn |
 | Servicio de predicción | FastAPI |
-| API principal | Java 21, Spring Boot 3 |
+| API principal | Java 21, Spring Boot 4 |
 | Base de datos | PostgreSQL |
 | Interfaz web | React, Vite, TailwindCSS |
 | Infraestructura | Docker, Oracle Cloud Infrastructure (Object Storage + Compute) |
@@ -96,8 +94,15 @@ Se requiere tener **Docker** y **Docker Compose** instalados.
 ```bash
 git clone https://github.com/No-Country-simulation/G9-LATAM-Team-36.git
 cd G9-LATAM-Team-36
-cp .env.example .env
+cp .env.example .env          # opcional: hay valores por defecto
 docker compose up -d --build
+```
+
+Esto levanta los 4 servicios. En local, el `modelo.joblib` entrenado se monta por volumen
+en el servicio ML (no requiere OCI). Para verificar que todo quedó sano:
+
+```bash
+bash infra/scripts/check.sh
 ```
 
 Una vez levantado:
@@ -105,8 +110,10 @@ Una vez levantado:
 | Servicio | URL |
 |---|---|
 | Interfaz web | http://localhost |
-| Documentación de la API | http://localhost:8080/swagger-ui.html |
 | Documentación del servicio de predicción | http://localhost:8000/docs |
+| Documentación de la API (Swagger) | http://localhost:8080/swagger-ui.html _(próximamente — Bloque F)_ |
+
+Para apagar: `docker compose down` (agregar `-v` para borrar también la base de datos).
 
 ---
 
@@ -139,8 +146,22 @@ Una vez levantado:
 }
 ```
 
-La documentación interactiva completa está disponible en `/swagger-ui.html` una vez
-que el proyecto está en ejecución.
+La documentación interactiva completa estará disponible en `/swagger-ui.html` una vez
+que el Bloque F la habilite.
+
+---
+
+## ☁️ Despliegue en OCI
+
+El proyecto se despliega sobre **Oracle Cloud Infrastructure** usando dos servicios:
+**Object Storage** (almacena el modelo entrenado) y **Compute** (aloja los 4 contenedores).
+
+La guía paso a paso —crear el bucket, la VM, la red y desplegar— está en
+[`infra/oci/notas.md`](infra/oci/notas.md). En la VM, el despliegue es un solo comando:
+
+```bash
+bash infra/scripts/deploy.sh   # trae cambios, reconstruye, levanta y verifica
+```
 
 ---
 
