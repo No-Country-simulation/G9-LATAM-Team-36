@@ -29,7 +29,6 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new LinkedHashMap<>();
         Class<?> targetClass = ex.getBindingResult().getTarget().getClass();
 
-        // Recorrer todos los errores de validación y extraer los mensajes personalizados
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             if (error instanceof FieldError fieldError) {
                 String jsonFieldName = resolveJsonFieldName(fieldError, targetClass);
@@ -66,7 +65,6 @@ public class GlobalExceptionHandler {
         if (cause instanceof MismatchedInputException mie && !mie.getPath().isEmpty()) {
             String campo = mie.getPath().getFirst().getPropertyName();
 
-            // Caso especial: enum inválido -> listamos los valores permitidos
             if (mie.getTargetType() != null && mie.getTargetType().isEnum()) {
                 String valoresValidos = Arrays.stream(mie.getTargetType().getEnumConstants())
                         .map(Object::toString)
@@ -85,8 +83,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorPayload);
     }
 
-    // TODO (Bloque G): agregar handler de EntityNotFoundException -> 404
-    // cuando se implementen los endpoints de consulta.
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                Map.of()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(NoResourceFoundException ex) {
