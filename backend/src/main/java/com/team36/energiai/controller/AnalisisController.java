@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/analisis-energetico")
+@RequestMapping("/analisis-energetico")
 public class AnalisisController {
 
     private final AnalisisService analisisService;

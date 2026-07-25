@@ -14,21 +14,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/analisis")
 public class ConsultaController {
 
-    @Autowired
-    private ConsultaService consultaService;
+    private final ConsultaService consultaService;
+
+    public ConsultaController(ConsultaService consultaService) {
+        this.consultaService = consultaService;
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AnalisisResponse> obtenerPorId(@PathVariable Long id){
+    public ResponseEntity<AnalisisResponse> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(consultaService.obtenerPorId(id));
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<Page<AnalisisResponse>> obtenerTodos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-            ){
+    ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("creadoEn").descending());
         Page<AnalisisResponse> resultado = consultaService.obtenerTodos(pageable);
         return ResponseEntity.ok(resultado);
-        }
+    }
 }
