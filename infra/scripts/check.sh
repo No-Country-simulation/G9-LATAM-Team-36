@@ -26,11 +26,11 @@ fi
 
 # backend — prueba FUNCIONAL: el ejemplo del brief debe responder 2xx
 EJEMPLO='{"consumo_kwh":420,"uso_horario_pico":true,"cantidad_equipos":10,"tipo_inmueble":"Casa","horas_alto_consumo":8}'
-if curl -sf -X POST "http://$HOST:8080/api/analisis-energetico" \
+if curl -sf -X POST "http://$HOST:8080/analisis-energetico" \
         -H "Content-Type: application/json" -d "$EJEMPLO" >/dev/null; then
-  ok "backend     (POST :8080/api/analisis-energetico)"
+  ok "backend     (POST :8080/analisis-energetico)"
 else
-  fail "backend     (POST :8080/api/analisis-energetico)"
+  fail "backend     (POST :8080/analisis-energetico)"
 fi
 
 # frontend — sirve la página
