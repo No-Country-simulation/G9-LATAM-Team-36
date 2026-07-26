@@ -11,10 +11,10 @@ COPY src/ src/
 RUN ./mvnw clean package -DskipTests -B
 
 # ---- Etapa 2: runtime ----
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring
 
 COPY --from=build /app/target/energiai-*.jar app.jar
