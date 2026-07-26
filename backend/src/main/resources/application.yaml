@@ -7,9 +7,6 @@ spring:
 tarifa:
   kwh: 0.75
 
-logging:
-  level:
-    org.flywaydb: DEBUG
 # springdoc: comentado hasta que agreguemos la dependencia al pom.xml
 # springdoc:
 #   swagger-ui:
