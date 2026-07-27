@@ -36,6 +36,8 @@ lo descarga.
 - [x] Namespace: `axdjeqy6h1zi`
 - [x] Región: `mx-queretaro-1` (Mexico Central — Querétaro)
 - [x] API Key generada · llave privada en la máquina de Omar (fuera del repo)
+- [x] Flujo C→OCI→D validado: el ml-service descarga el modelo del bucket
+  (`USE_LOCAL_MODEL=false`) y predice el ejemplo del brief → Ineficiente (0.97)
 
 > **Credenciales (NO en el repo):** el SDK lee `~/.oci/config`; la llave privada
 > está en `~/Documentos/OCI WEPLAY32/energiai_api_key_priv.pem`. Los OCID y el
@@ -64,15 +66,22 @@ lo descarga.
 4. Conectarse: `ssh ubuntu@<IP_PUBLICA>`.
 
 ### Bitácora Compute
-- [ ] Shape: `VM.Standard.A1.Flex` · OCPUs/RAM: `_______`
-- [ ] Availability Domain con capacidad: `_______`
-- [ ] IP pública: `_______`
-- [ ] Usuario SSH: `_______`
+- [x] VCN `energiai-vcn` creada con el **VCN Wizard** (subred pública + Internet Gateway + rutas)
+- [ ] VM `energiai-vm` — Shape objetivo `VM.Standard.A1.Flex` **2 OCPU / 12 GB** (Always Free)
+- [ ] Availability Domain: `cEEW:MX-QUERETARO-1-AD-1` (⚠️ Querétaro tiene **un solo AD**)
+- [ ] IP pública: `_______` (pendiente)
+- [ ] Usuario SSH: `ubuntu`
+
+> ⚠️ **Capacidad ARM:** al crear la VM da *"Out of host capacity"* (común en el tier
+> gratuito; con un solo AD no se puede cambiar de AD). Se dejó corriendo un **script de
+> reintento automático** (`scratchpad/lanzar_vm_arm.py`) que crea la VM en cuanto haya
+> capacidad y muestra la IP. Si en 1–2 días no cae el 2/12, bajar a **1 OCPU / 6 GB**
+> (igual corre todo el stack).
 
 ### Intentos de aprovisionamiento (si "Out of capacity")
 | Fecha | Availability Domain | Resultado |
 |---|---|---|
-| | | |
+| 27 jul 2026 | AD-1 (único) | Out of capacity (probado 2/12 y 1/6) → script de reintento en curso |
 
 ---
 
@@ -95,10 +104,10 @@ En la **VCN → Subnet → Security List** (o una NSG), agregar reglas de *Ingre
 > (`sudo iptables -L` / `netfilter-persistent`).
 
 ### Bitácora Red
-- [ ] Puerto 22 — solo IPs del equipo
-- [ ] Puerto 80 — público
-- [ ] Puerto 443 — público (si hay TLS)
-- [ ] 8080/8000/5432 — confirmados NO expuestos
+- [x] Puerto 22 (SSH) — abierto `0.0.0.0/0` (lo creó el VCN Wizard)
+- [x] Puerto 80 (HTTP) — abierto `0.0.0.0/0` (agregado a la Default Security List)
+- [ ] Puerto 443 — pendiente (solo si se configura TLS)
+- [x] 8080/8000/5432 — NO expuestos (solo red interna de Docker) ✅
 
 ---
 
