@@ -32,10 +32,17 @@ lo descarga.
    `.env`. (En local seguimos con `USE_LOCAL_MODEL=true`, que monta el modelo por volumen.)
 
 ### Bitácora Object Storage
-- [ ] Bucket `energiai-models` (privado) creado
-- [ ] Namespace: `_______`
-- [ ] Región: `_______`
-- [ ] API Key generada, `.pem` guardado fuera del repo y compartido por canal privado
+- [x] Bucket `energiai-models` (privado) creado — modelo y metadata subidos ✅
+- [x] Namespace: `axdjeqy6h1zi`
+- [x] Región: `mx-queretaro-1` (Mexico Central — Querétaro)
+- [x] API Key generada · llave privada en la máquina de Omar (fuera del repo)
+
+> **Credenciales (NO en el repo):** el SDK lee `~/.oci/config`; la llave privada
+> está en `~/Documentos/OCI WEPLAY32/energiai_api_key_priv.pem`. Los OCID y el
+> fingerprint viven dentro de ese `config` — nunca se commitean.
+>
+> **Subir/actualizar el modelo:** `python data-science/src/upload_model.py`
+> (usa el perfil DEFAULT de `~/.oci/config`).
 
 ---
 
