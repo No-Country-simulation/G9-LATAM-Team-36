@@ -27,69 +27,49 @@ public class RecomendacionServiceImpl implements RecomendacionService {
 
             new Rule(
                     (request, categoria) -> Boolean.TRUE.equals(request.usoHorarioPico()),
-                    "Reduce el uso de equipos durante las horas pico para disminuir el costo del consumo eléctrico.",
+                    "Evita usar tus equipos de mayor consumo durante el horario pico. Puede reducir tu factura entre un 10% y 20%.",
                     1
             ),
 
-            //CONSUMO
+            // CANTIDAD DE EQUIPOS
 
             new Rule(
-                    (request, categoria) -> request.consumoKwh() <= 300,
-                    "Mantén tus hábitos actuales de consumo y continúa monitoreando periódicamente el uso de energía.",
-                    5
-            ),
-
-            new Rule(
-                    (request, categoria) -> request.consumoKwh() > 300 && request.consumoKwh() <= 500,
-                    "Evalúa los equipos con mayor consumo energético y optimiza su tiempo de uso.",
-                    2
-            ),
-
-            new Rule(
-                    (request, categoria) -> request.consumoKwh() > 500,
-                    "Considera reemplazar equipos antiguos por modelos con mayor eficiencia energética.",
-                    1
-            ),
-
-            //CANTIDAD DE EQUIPOS
-
-            new Rule(
-                    (request, categoria) -> request.cantidadEquipos() <= 5,
-                    "Realiza mantenimiento preventivo a tus equipos para conservar su eficiencia.",
+                    (request, categoria) -> request.cantidadEquipos() <= 8,
+                    "Con pocos equipos, un mantenimiento preventivo anual basta para mantenerlos eficientes.",
                     4
             ),
 
             new Rule(
-                    (request, categoria) -> request.cantidadEquipos() > 5 &&
-                            request.cantidadEquipos() <= 12,
-                    "Programa revisiones periódicas para garantizar un consumo eficiente de todos los equipos.",
+                    (request, categoria) -> request.cantidadEquipos() > 8 &&
+                            request.cantidadEquipos() <= 15,
+                    "Programa revisiones semestrales de tus equipos: el desgaste acumulado puede elevar tu consumo hasta un 15%.",
                     3
             ),
 
             new Rule(
-                    (request, categoria) -> request.cantidadEquipos() > 12,
-                    "Desconecta los equipos que permanezcan en modo de espera cuando no estén en uso.",
+                    (request, categoria) -> request.cantidadEquipos() > 15,
+                    "Desconecta los equipos que no estés usando activamente; el consumo en espera puede llegar al 10% de tu factura.",
                     2
             ),
 
-            //HORAS DE ALTO CONSUMO
+            // HORAS DE ALTO CONSUMO
 
             new Rule(
                     (request, categoria) -> request.horasAltoConsumo() <= 3,
-                    "Continúa distribuyendo adecuadamente tus actividades de mayor consumo energético.",
+                    "Buen manejo de tus horas de alto consumo. Sigue concentrándolas en franjas cortas.",
                     5
             ),
 
             new Rule(
                     (request, categoria) -> request.horasAltoConsumo() > 3 &&
-                            request.horasAltoConsumo() <= 10,
-                    "Distribuye las actividades de mayor consumo durante diferentes momentos del día.",
-                    2
+                            request.horasAltoConsumo() <= 6,
+                    "Distribuye tus actividades de mayor consumo en distintos momentos del día para evitar picos de demanda.",
+                    3
             ),
 
             new Rule(
-                    (request, categoria) -> request.horasAltoConsumo() > 10,
-                    "Programa las actividades de alto consumo fuera de periodos prolongados para reducir la demanda energética.",
+                    (request, categoria) -> request.horasAltoConsumo() > 6,
+                    "Divide tus actividades de alto consumo en bloques cortos; el uso prolongado eleva significativamente el costo.",
                     1
             ),
 
@@ -99,7 +79,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria == Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.CASA,
-                    "Mejora el aislamiento térmico de la vivienda y optimiza el uso de los sistemas de climatización.",
+                    "Mejora el aislamiento de tu vivienda y revisa el estado de tus equipos de climatización.",
                     2
             ),
 
@@ -107,7 +87,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria != Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.CASA,
-                    "Mantén el buen aislamiento de la vivienda y realiza revisiones periódicas de los equipos eléctricos.",
+                    "Mantén revisiones periódicas de tus instalaciones eléctricas.",
                     5
             ),
 
@@ -115,7 +95,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria == Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.DEPARTAMENTO,
-                    "Evita utilizar simultáneamente varios electrodomésticos de alta potencia para reducir la demanda energética.",
+                    "Evita usar varios equipos de alta potencia al mismo tiempo; en espacios reducidos elevan mucho la demanda.",
                     2
             ),
 
@@ -123,7 +103,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria != Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.DEPARTAMENTO,
-                    "Continúa utilizando de forma eficiente los electrodomésticos y evita consumos innecesarios.",
+                    "Mantén escalonado el uso de tus equipos.",
                     5
             ),
 
@@ -131,7 +111,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria == Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.LOCAL,
-                    "Implementa un plan de gestión energética para disminuir los costos operativos del establecimiento.",
+                    "Implementa un plan de gestión energética con auditorías trimestrales y metas mensuales de reducción.",
                     2
             ),
 
@@ -139,7 +119,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
                     (request, categoria) ->
                             categoria != Categoria.INEFICIENTE &&
                                     request.tipoInmueble() == TipoInmueble.LOCAL,
-                    "Monitorea periódicamente el consumo eléctrico del establecimiento para mantener una operación eficiente.",
+                    "Monitorea el consumo mensual y documenta variaciones.",
                     5
             )
     );
