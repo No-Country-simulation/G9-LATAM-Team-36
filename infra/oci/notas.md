@@ -67,16 +67,22 @@ lo descarga.
 
 ### Bitácora Compute
 - [x] VCN `energiai-vcn` creada con el **VCN Wizard** (subred pública + Internet Gateway + rutas)
-- [ ] VM `energiai-vm` — Shape objetivo `VM.Standard.A1.Flex` **2 OCPU / 12 GB** (Always Free)
-- [ ] Availability Domain: `cEEW:MX-QUERETARO-1-AD-1` (⚠️ Querétaro tiene **un solo AD**)
-- [ ] IP pública: `_______` (pendiente)
-- [ ] Usuario SSH: `ubuntu`
+- [x] VM `energiai-vm` — `VM.Standard.E5.Flex` **1 OCPU / 12 GB** (AMD, con créditos del trial)
+- [x] Availability Domain: `cEEW:MX-QUERETARO-1-AD-1`
+- [x] IP pública: `159.54.157.211`
+- [x] Usuario SSH: `ubuntu`
 
-> ⚠️ **Capacidad ARM:** al crear la VM da *"Out of host capacity"* (común en el tier
-> gratuito; con un solo AD no se puede cambiar de AD). Se dejó corriendo un **script de
-> reintento automático** (`scratchpad/lanzar_vm_arm.py`) que crea la VM en cuanto haya
-> capacidad y muestra la IP. Si en 1–2 días no cae el 2/12, bajar a **1 OCPU / 6 GB**
-> (igual corre todo el stack).
+> ⚠️ **Capacidad ARM (Always Free):** nunca se liberó capacidad para `A1.Flex` tras 2 días
+> de reintentos (Querétaro tiene un solo AD). Se optó por una **VM AMD `E5.Flex` de pago con
+> los créditos del trial** (~$1/día). El script de reintento ARM puede seguir corriendo por
+> si aparece capacidad gratis (entonces migrar y eliminar la de pago).
+>
+> ⚠️ **Cuidar créditos:** la VM de pago se **apaga (Stop)** cuando no se usa, y se **elimina
+> (Terminate)** al terminar el hackathon. NO hacer "Upgrade to Pay As You Go". Budget con
+> alerta creado.
+>
+> ⚠️ **La VM despliega la rama `dev`** (no `main`, que está atrasada): en la VM se hizo
+> `git checkout dev` antes de `docker compose up`.
 
 ### Intentos de aprovisionamiento (si "Out of capacity")
 | Fecha | Availability Domain | Resultado |
@@ -139,10 +145,10 @@ Ya en la VM (por SSH):
    ```
 
 ### Bitácora despliegue
-- [ ] Docker instalado en la VM (`setup_vm.sh`)
-- [ ] `.env` configurado en la VM (con contraseña real)
-- [ ] `deploy.sh` corrió y `check.sh` dio todo verde
-- [ ] URL pública verificada: `http://_______/`
+- [x] Docker instalado en la VM (`setup_vm.sh`)
+- [x] `.env` configurado en la VM (`SPRING_PROFILES_ACTIVE=prod`, contraseña propia)
+- [x] `docker compose up -d --build` (rama `dev`) y `check.sh` todo verde
+- [x] URL pública verificada: `http://159.54.157.211/`
 
 ---
 
