@@ -19,8 +19,8 @@ export default function TablaHistorial({ data }) {
                 </tr>
                 </thead>
                 <tbody>
-                {data.map((item) => (
-                    <tr key={item.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
+                {data.map((item, index) => (
+                    <tr key={item.id ?? index} className="border-b border-slate-800/50 hover:bg-slate-800/30">
                         <td className="py-2">
                             {item.creado_en ? new Date(item.creado_en).toLocaleString(undefined, {
                                 year: 'numeric',
