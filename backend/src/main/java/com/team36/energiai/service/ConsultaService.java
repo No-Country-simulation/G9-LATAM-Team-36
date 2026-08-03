@@ -1,6 +1,7 @@
 package com.team36.energiai.service;
 
 import com.team36.energiai.dto.AnalisisResponse;
+import com.team36.energiai.dto.HistorialResponse;
 import com.team36.energiai.exception.RecursoNoEncontradoException;
 import com.team36.energiai.model.Analisis;
 import com.team36.energiai.model.Categoria;
@@ -28,8 +29,8 @@ public class ConsultaService {
         return toResponse(analisis);
     }
 
-    public Page<AnalisisResponse> obtenerTodos(Pageable pageable) {
-        return repository.findAll(pageable).map(this::toResponse);
+    public Page<HistorialResponse> obtenerTodos(Pageable pageable) {
+        return repository.findAll(pageable).map(this::toHistorialResponse);
     }
 
     private AnalisisResponse toResponse(Analisis analisis) {
@@ -38,6 +39,18 @@ public class ConsultaService {
                 analisis.getProbabilidad().doubleValue(),
                 analisis.getRecomendaciones(),
                 analisis.getCostoEstimadoMensual()
+        );
+    }
+
+    private HistorialResponse toHistorialResponse(Analisis analisis) {
+        return new HistorialResponse(
+                Categoria.valueOf(analisis.getCategoria()),
+                analisis.getProbabilidad().doubleValue(),
+                analisis.getRecomendaciones(),
+                analisis.getCostoEstimadoMensual(),
+                analisis.getCreadoEn(),
+                analisis.getConsumoKwh(),
+                analisis.getTipoInmueble().name()
         );
     }
 }
