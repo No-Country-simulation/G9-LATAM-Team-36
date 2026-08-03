@@ -17,14 +17,20 @@ Para conectar a la API real: copia `.env.example` a `.env` y pon `VITE_USE_MOCK=
 
 ## Reparto del trabajo (cada quien SU carpeta)
 
-| Persona | Vista | Su página | Su carpeta de componentes |
-|---|---|---|---|
-| **Persona 1** | Análisis (formulario + resultado) | `src/pages/Analisis.jsx` | `src/components/analisis/` |
-| **Persona 2** | Historial | `src/pages/Historial.jsx` | `src/components/historial/` |
-| **Persona 3** | Simulador de ahorro | `src/pages/Simulador.jsx` | `src/components/simulador/` |
+| Persona | Vista | Ruta | Su página | Su carpeta de componentes |
+|---|---|---|---|---|
+| **Persona 1** | Análisis (formulario + resultado) | `/analizar` | `src/pages/Analisis.jsx` | `src/components/analisis/` |
+| **Persona 2** | Historial | `/historial` | `src/pages/Historial.jsx` | `src/components/historial/` |
+| **Persona 3** | Simulador de ahorro | `/simulador` | `src/pages/Simulador.jsx` | `src/components/simulador/` |
+| **Persona 4** | Home / Landing | `/` | `src/pages/Home.jsx` | `src/components/home/` |
 
 **Regla de oro:** cada quien crea/edita archivos **solo dentro de su carpeta** y su página.
 Así nunca hay conflictos de Git.
+
+**Si necesitas un componente que no existe** (ej. un `Slider`, un `Toggle`): **créalo en TU
+carpeta** (`src/components/<tu-vista>/Slider.jsx`), no esperes a nadie. No toques `ui/`. Si más
+adelante otra persona lo necesita, se "promueve" a `src/components/ui/` y se coordina en ese
+momento. Así **nadie se bloquea** esperando trabajo de otro.
 
 ### Archivos compartidos — NO tocar sin avisar
 Estos ya están listos; si necesitas cambiarlos, avisa por el grupo primero:
@@ -142,12 +148,29 @@ slider, con **debounce (~400 ms)** llamar `analizarConsumo(simulado)` y actualiz
 **Terminado cuando:** los sliders recalculan en vivo (con debounce), se ve la diferencia de
 costo/categoría entre actual y simulado, y hay una gráfica comparativa.
 
+### Persona 4 — Home / Landing (`pages/Home.jsx`)
+
+**Objetivo:** la página de inicio (ruta `/`) — la primera impresión del producto.
+
+**Componentes a crear en `src/components/home/`:**
+- `Hero.jsx` — título grande, el nombre EnergiAI, una frase de qué hace, y un botón
+  (`<Link to="/analizar">`) que lleve a analizar el consumo.
+- `Beneficios.jsx` (opcional) — 3 tarjetas (`<Card>`) explicando: clasifica tu eficiencia,
+  recibe recomendaciones, estima tu costo.
+- opcional: una franja con el semáforo (Eficiente / Moderado / Ineficiente) usando `estiloDe()`.
+
+**Estructura de la página:** es estática (no llama a la API). Solo maquetación con los
+componentes base y navegación a las otras vistas.
+
+**Terminado cuando:** la landing se ve atractiva, explica el producto en segundos y tiene un
+botón claro que lleva a `/analizar`. Responsive.
+
 ---
 
 ## Flujo de Git
 
-1. La base ya está en `dev` (esta guía + layout + router + UI).
+1. La base ya está en `dev` (esta guía + layout + router + UI + las 4 rutas listas).
 2. Cada persona crea su rama desde `dev`:
-   - `feature/I-analisis` · `feature/I-historial` · `feature/I-simulador`
+   - `feature/I-analisis` · `feature/I-historial` · `feature/I-simulador` · `feature/I-home`
 3. Trabaja **solo en tu carpeta**, haz commits pequeños, y abre PR a `dev`.
 4. Como cada quien toca archivos distintos, los PRs no chocan entre sí.
