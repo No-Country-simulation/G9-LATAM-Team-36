@@ -29,6 +29,7 @@ export async function obtenerHistorialMock() {
       { id: 2, categoria: "Moderado", consumo_kwh: 280, tipo_inmueble: "DEPARTAMENTO", costo_estimado_mensual: 210.00, creado_en: new Date().toISOString() },
     ],
     totalElements: 2,
+    totalPages: 1,
   };
 }
 
