@@ -25,10 +25,11 @@ export async function obtenerHistorialMock() {
   await delay(300);
   return {
     content: [
-      { id: 1, categoria: "Ineficiente", consumo_kwh: 420, creado_en: new Date().toISOString() },
-      { id: 2, categoria: "Moderado", consumo_kwh: 280, creado_en: new Date().toISOString() },
+      { id: 1, categoria: "Ineficiente", consumo_kwh: 420, tipo_inmueble: "CASA", costo_estimado_mensual: 315.00, creado_en: new Date().toISOString() },
+      { id: 2, categoria: "Moderado", consumo_kwh: 280, tipo_inmueble: "DEPARTAMENTO", costo_estimado_mensual: 210.00, creado_en: new Date().toISOString() },
     ],
     totalElements: 2,
+    totalPages: 1,
   };
 }
 
