@@ -1,15 +1,19 @@
 package com.team36.energiai.model;
 
+import com.team36.energiai.dto.AnalisisRequest;
+import com.team36.energiai.dto.AnalisisResponse;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
 
-/** Bloque G — Entidad de persistencia según el Contrato 4. */
 @Entity
 @Table(name = "analisis")
 public class Analisis {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,24 +21,120 @@ public class Analisis {
     private Double consumoKwh;
     private Boolean usoHorarioPico;
     private Integer cantidadEquipos;
-    private String tipoInmueble;
-    private Integer horasAltoConsumo;
 
+    @Enumerated(EnumType.STRING)
+    private TipoInmueble tipoInmueble;
+
+    private Integer horasAltoConsumo;
     private String categoria;
-    private Double probabilidad;
+    private BigDecimal probabilidad;
     private BigDecimal costoEstimadoMensual;
 
+    @Convert(converter = RecomendacionesConverter.class)
     @Column(columnDefinition = "TEXT")
-    private String recomendaciones; // TODO (Bloque G): serializar como JSON (lista -> string)
+    private List<String> recomendaciones;
+    @CreationTimestamp
+    private LocalDateTime creadoEn;
 
-    private Instant creadoEn = Instant.now();
+    public Long getId() {
+        return id;
+    }
 
-    protected Analisis() {}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    // TODO (Bloque G): agregar constructor completo, getters/setters
-    // (o usar Lombok @Getter/@Setter si el equipo lo prefiere).
+    public Double getConsumoKwh() {
+        return consumoKwh;
+    }
 
-    public Long getId() { return id; }
-    public String getCategoria() { return categoria; }
-    public Instant getCreadoEn() { return creadoEn; }
+    public void setConsumoKwh(Double consumoKwh) {
+        this.consumoKwh = consumoKwh;
+    }
+
+    public Boolean getUsoHorarioPico() {
+        return usoHorarioPico;
+    }
+
+    public void setUsoHorarioPico(Boolean usoHorarioPico) {
+        this.usoHorarioPico = usoHorarioPico;
+    }
+
+    public Integer getCantidadEquipos() {
+        return cantidadEquipos;
+    }
+
+    public void setCantidadEquipos(Integer cantidadEquipos) {
+        this.cantidadEquipos = cantidadEquipos;
+    }
+
+    public TipoInmueble getTipoInmueble() {
+        return tipoInmueble;
+    }
+
+    public void setTipoInmueble(TipoInmueble tipoInmueble) {
+        this.tipoInmueble = tipoInmueble;
+    }
+
+    public Integer getHorasAltoConsumo() {
+        return horasAltoConsumo;
+    }
+
+    public void setHorasAltoConsumo(Integer horasAltoConsumo) {
+        this.horasAltoConsumo = horasAltoConsumo;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public BigDecimal getProbabilidad() {
+        return probabilidad;
+    }
+
+    public void setProbabilidad(BigDecimal probabilidad) {
+        this.probabilidad = probabilidad;
+    }
+
+    public BigDecimal getCostoEstimadoMensual() {
+        return costoEstimadoMensual;
+    }
+
+    public void setCostoEstimadoMensual(BigDecimal costoEstimadoMensual) {
+        this.costoEstimadoMensual = costoEstimadoMensual;
+    }
+
+    public List<String> getRecomendaciones() {
+        return recomendaciones;
+    }
+
+    public void setRecomendaciones(List<String> recomendaciones) {
+        this.recomendaciones = recomendaciones;
+    }
+
+    public LocalDateTime getCreadoEn() {
+        return creadoEn;
+    }
+
+    public void setCreadoEn(LocalDateTime creadoEn) {
+        this.creadoEn = creadoEn;
+    }
+
+    public static Analisis desde(AnalisisRequest request, AnalisisResponse response){
+        Analisis analisis = new Analisis();
+        analisis.setConsumoKwh(request.consumoKwh());
+        analisis.setUsoHorarioPico(request.usoHorarioPico());
+        analisis.setCantidadEquipos(request.cantidadEquipos());
+        analisis.setTipoInmueble(request.tipoInmueble());
+        analisis.setHorasAltoConsumo(request.horasAltoConsumo());
+        analisis.setCategoria(response.categoria().name());
+        analisis.setProbabilidad(BigDecimal.valueOf(response.probabilidad()));
+        analisis.setCostoEstimadoMensual(response.costoEstimadoMensual());
+        analisis.setRecomendaciones(response.recomendaciones());
+        return  analisis;
+    }
 }

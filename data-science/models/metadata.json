@@ -1,0 +1,30 @@
+{
+  "modelo": "RandomForestClassifier (pipeline con OneHot + StandardScaler)",
+  "fecha_entrenamiento": "2026-07-21T00:59:32.166816+00:00",
+  "sklearn_version": "1.9.0",
+  "params": {
+    "n_estimators": 100,
+    "max_depth": null
+  },
+  "metricas_test": {
+    "accuracy": 0.9613,
+    "f1_macro": 0.9608
+  },
+  "cv_f1_macro": {
+    "mean": 0.9432,
+    "std": 0.0096
+  },
+  "features": [
+    "tipo_inmueble",
+    "consumo_kwh",
+    "cantidad_equipos",
+    "horas_alto_consumo",
+    "uso_horario_pico"
+  ],
+  "clases": [
+    "Eficiente",
+    "Ineficiente",
+    "Moderado"
+  ],
+  "n_registros_dataset": 4000
+}

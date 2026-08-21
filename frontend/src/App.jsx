@@ -1,16 +1,24 @@
-// Bloque I — App raíz. TODO: agregar react-router con las páginas
-// Analisis.jsx e Historial.jsx (ver pages/).
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Home from "./pages/Home";
+import Analisis from "./pages/Analisis";
+import Historial from "./pages/Historial";
+import Simulador from "./pages/Simulador";
 
+// Router de la app. Cada ruta la construye una persona distinta (ver GUIA_FRONTEND.md).
+// NO agregar lógica de vistas aquí — solo el enrutado.
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">⚡ EnergiAI</h1>
-        <p className="text-slate-400 mt-2">
-          Bloque I: construir FormularioConsumo, ResultadoCard,
-          GaugeEficiencia y SimuladorAhorro aquí.
-        </p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/analizar" element={<Analisis />} />
+          <Route path="/historial" element={<Historial />} />
+          <Route path="/simulador" element={<Simulador />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
 }

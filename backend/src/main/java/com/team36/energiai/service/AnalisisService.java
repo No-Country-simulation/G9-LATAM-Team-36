@@ -4,47 +4,46 @@ import com.team36.energiai.client.MlClient;
 import com.team36.energiai.dto.AnalisisRequest;
 import com.team36.energiai.dto.AnalisisResponse;
 import com.team36.energiai.dto.PrediccionDto;
+import com.team36.energiai.model.Analisis;
+import com.team36.energiai.repository.AnalisisRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-/**
- * Bloque E — Orquesta el flujo completo de POST /analisis-energetico:
- * 1) predicción vía MlClient (Bloque D)
- * 2) cálculo del costo estimado (tarifa fija $0.75/kWh)
- * 3) recomendaciones vía RecomendacionService (Bloque H)
- * 4) TODO (Bloque G): persistir el análisis antes de retornar
- */
+
 @Service
 public class AnalisisService {
 
-    private static final BigDecimal TARIFA_KWH = new BigDecimal("0.75");
-
     private final MlClient mlClient;
+    private final CalculoFinancieroService calculoFinancieroService;
     private final RecomendacionService recomendacionService;
+    private final AnalisisRepository analisisRepository;
 
-    public AnalisisService(MlClient mlClient, RecomendacionService recomendacionService) {
+    public AnalisisService(MlClient mlClient, CalculoFinancieroService calculoFinancieroService, RecomendacionService recomendacionService, AnalisisRepository analisisRepository) {
         this.mlClient = mlClient;
+        this.calculoFinancieroService = calculoFinancieroService;
         this.recomendacionService = recomendacionService;
+        this.analisisRepository = analisisRepository;
     }
 
-    public AnalisisResponse analizar(AnalisisRequest request) {
+    public AnalisisResponse analizar(AnalisisRequest request, boolean persistir) {
         PrediccionDto prediccion = mlClient.predecir(request);
 
-        BigDecimal costoEstimado = BigDecimal.valueOf(request.consumoKwh())
-                .multiply(TARIFA_KWH)
-                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal costoEstimado = calculoFinancieroService.calcularCostoEstimado(request.consumoKwh());
 
         var recomendaciones = recomendacionService.generar(request, prediccion.categoria());
 
-        // TODO (Bloque G): guardar `request` + resultado en el repositorio JPA aquí.
-
-        return new AnalisisResponse(
+        AnalisisResponse response = new AnalisisResponse(
                 prediccion.categoria(),
                 prediccion.probabilidad(),
                 recomendaciones,
                 costoEstimado
         );
+
+        if (persistir) {
+            analisisRepository.save(Analisis.desde(request, response));
+        }
+
+        return response;
     }
 }

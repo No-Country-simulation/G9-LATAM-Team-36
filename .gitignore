@@ -9,9 +9,6 @@ infra/oci/config
 # --- Java / Maven ---
 backend/target/
 backend/*.class
-backend/.mvn/
-backend/mvnw
-backend/mvnw.cmd
 
 # --- Python ---
 ml-service/__pycache__/
@@ -34,3 +31,6 @@ frontend/.vite/
 # --- Sistema ---
 .DS_Store
 *.log
+.vscode/
+.idea/
+*.iml

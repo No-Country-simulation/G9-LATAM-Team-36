@@ -10,8 +10,11 @@ import pandas as pd
 CONSUMO_ESPERADO = {"Casa": 350, "Departamento": 220, "Local": 600}
 KWH_POR_EQUIPO_REF = 35
 
-UMBRAL_EFICIENTE = 0.85
-UMBRAL_MODERADO = 1.15
+# Umbrales calibrados con el dataset del Bloque A (ver docs/criterios_perfiles.md):
+# dejan las clases casi uniformes (~33/32/35) y hacen que el ejemplo canonico del
+# brief (420 kWh, Casa, pico, 10 equipos, 8h -> indice 1.073) caiga en Ineficiente.
+UMBRAL_EFICIENTE = 0.80
+UMBRAL_MODERADO = 1.05
 
 
 def calcular_indice(row: pd.Series) -> float:

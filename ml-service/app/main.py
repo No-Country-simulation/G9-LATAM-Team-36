@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 
-from app.model_loader import cargar_modelo
+from app.model_loader import MODEL_INFO, cargar_modelo
 from app.predictor import predecir
 from app.schemas import PredictRequest, PredictResponse
 
@@ -17,14 +17,24 @@ async def lifespan(app: FastAPI):
     state["modelo"] = None
 
 
-app = FastAPI(title="EnergiAI ML Service", lifespan=lifespan)
+app = FastAPI(
+    title="EnergiAI ML Service",
+    description="Servicio de predicción del perfil energético (Contrato 2).",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 
 @app.get("/health")
 def health():
+    """Estado del servicio y del modelo cargado (real vs dummy, versión y fuente)."""
+    cargado = state["modelo"] is not None
     return {
-        "status": "ok" if state["modelo"] is not None else "error",
-        "model_loaded": state["modelo"] is not None,
+        "status": "ok" if cargado else "error",
+        "model_loaded": cargado,
+        "model_source": MODEL_INFO["source"],
+        "model_version": MODEL_INFO["version"],
+        "is_dummy": MODEL_INFO["is_dummy"],
     }
 
 

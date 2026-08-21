@@ -1,34 +1,65 @@
 package com.team36.energiai.controller;
 
-import com.team36.energiai.repository.AnalisisRepository;
+import com.team36.energiai.dto.AnalisisResponse;
+import com.team36.energiai.dto.ErrorResponse;
+import com.team36.energiai.dto.HistorialResponse;
+import com.team36.energiai.service.ConsultaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * Bloque G — Endpoints de consulta (segundo endpoint obligatorio del brief).
- * Controller propio para no tocar AnalisisController (dueño: Bloque E).
- */
 @RestController
+@RequestMapping("/analisis")
 public class ConsultaController {
 
-    private final AnalisisRepository repository;
+    private final ConsultaService consultaService;
 
-    public ConsultaController(AnalisisRepository repository) {
-        this.repository = repository;
+    public ConsultaController(ConsultaService consultaService) {
+        this.consultaService = consultaService;
     }
 
-    @GetMapping("/analisis/{id}")
-    public Object obtenerPorId(@PathVariable Long id) {
-        // TODO (Bloque G): lanzar EntityNotFoundException si no existe (F la mapea a 404)
-        return repository.findById(id).orElseThrow();
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtiene un analisis por su id")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Analisis encontrado",
+            content = @Content(schema = @Schema(implementation = AnalisisResponse.class))
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "No existe un analisis con ese id",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+    )
+    public ResponseEntity<AnalisisResponse> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(consultaService.obtenerPorId(id));
     }
 
-    @GetMapping("/analisis")
-    public Page<?> listar(Pageable pageable) {
-        // TODO (Bloque G): mapear entidad -> DTO de respuesta, ordenar por creadoEn desc
-        return repository.findAll(pageable);
+    @GetMapping
+    @Operation(summary = "Lista todos los analisis, paginados")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Listado paginado de analisis",
+            content = @Content(schema = @Schema(implementation = Page.class))
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Parametros de paginacion invalidos (page/size fuera de rango o no numericos)",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+    )
+    public ResponseEntity<Page<HistorialResponse>> obtenerTodos(
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "debe ser mayor o igual a 0") int page,
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "debe ser mayor o igual a 1") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("creadoEn").descending());
+        Page<HistorialResponse> resultado = consultaService.obtenerTodos(pageable);
+        return ResponseEntity.ok(resultado);
     }
 }
