@@ -40,7 +40,7 @@ negocio.
 - 💬 **Recomendaciones personalizadas** de ahorro, generadas según los hábitos específicos detectados en cada análisis.
 - 💰 **Estimación de costo mensual**, calculada sobre una tarifa de referencia.
 - 📊 **Historial de análisis**, para hacer seguimiento de la evolución del consumo a lo largo del tiempo.
-- 🧪 **Simulador de escenarios** — permite explorar cómo cambiaría la eficiencia y el costo al ajustar hábitos de uso (horarios, cantidad de equipos, horas de uso intensivo).
+- 🧪 **Comparador de escenarios** — contrasta un perfil de referencia con cambios hipotéticos, mostrando ahorro o sobrecosto sin guardar las simulaciones en el historial.
 - 📖 **API documentada** y lista para integrarse con otras aplicaciones o sistemas.
 
 ---
