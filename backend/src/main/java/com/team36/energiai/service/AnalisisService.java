@@ -9,7 +9,6 @@ import com.team36.energiai.repository.AnalisisRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 
 @Service
@@ -27,7 +26,7 @@ public class AnalisisService {
         this.analisisRepository = analisisRepository;
     }
 
-    public AnalisisResponse analizar(AnalisisRequest request) {
+    public AnalisisResponse analizar(AnalisisRequest request, boolean persistir) {
         PrediccionDto prediccion = mlClient.predecir(request);
 
         BigDecimal costoEstimado = calculoFinancieroService.calcularCostoEstimado(request.consumoKwh());
@@ -41,7 +40,9 @@ public class AnalisisService {
                 costoEstimado
         );
 
-        analisisRepository.save(Analisis.desde(request, response));
+        if (persistir) {
+            analisisRepository.save(Analisis.desde(request, response));
+        }
 
         return response;
     }

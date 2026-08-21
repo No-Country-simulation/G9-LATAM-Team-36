@@ -29,6 +29,10 @@ Salida:
 ```
 Consultas: `GET /analisis/{id}` · `GET /analisis?page=0&size=10`
 
+Por defecto, el `POST` guarda el resultado y responde `201 Created`. Para calcular
+escenarios temporales sin agregarlos al historial, como los del simulador, usar
+`POST /analisis-energetico?persistir=false`; esta variante responde `200 OK`.
+
 ## Contrato 2 — API interna (Backend ↔ ML Service)
 `POST /predict`
 

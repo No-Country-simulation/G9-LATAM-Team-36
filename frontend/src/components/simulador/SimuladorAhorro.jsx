@@ -22,13 +22,13 @@ export default function SimuladorAhorro() {
 
   // El escenario base se calcula una sola vez.
   useEffect(() => {
-    analizarConsumo(BASE).then(setBase).catch(() => {});
+    analizarConsumo(BASE, { persistir: false }).then(setBase).catch(() => {});
   }, []);
 
   // El escenario simulado recalcula con debounce al mover los controles.
   useEffect(() => {
     const t = setTimeout(() => {
-      analizarConsumo(sim).then(setResultado).catch(() => {});
+      analizarConsumo(sim, { persistir: false }).then(setResultado).catch(() => {});
     }, 400);
     return () => clearTimeout(t);
   }, [sim]);
