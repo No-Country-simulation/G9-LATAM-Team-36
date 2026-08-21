@@ -6,10 +6,11 @@ import { analizarConsumoMock, obtenerHistorialMock } from "./mock";
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 const API_URL = import.meta.env.VITE_API_URL || "";
 
-export async function analizarConsumo(datos) {
+export async function analizarConsumo(datos, { persistir = true } = {}) {
   if (USE_MOCK) return analizarConsumoMock(datos);
 
-  const res = await fetch(`${API_URL}/analisis-energetico`, {
+  const query = persistir ? "" : "?persistir=false";
+  const res = await fetch(`${API_URL}/analisis-energetico${query}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos),
