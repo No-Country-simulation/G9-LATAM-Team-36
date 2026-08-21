@@ -40,9 +40,9 @@ export default function ComparativaGrafica({ actual, simulado }) {
           }}
           formatter={(v) => [formatoMoneda(v), "Costo mensual"]}
         />
-        <Bar dataKey="costo" radius={[8, 8, 0, 0]} maxBarSize={90}>
+        <Bar dataKey="costo" radius={[8, 8, 0, 0]} maxBarSize={90} isAnimationActive={false}>
           <Cell fill="#64748b" />
-          <Cell fill="#10b981" />
+          <Cell fill={simulado <= actual ? "#10b981" : "#ef4444"} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
